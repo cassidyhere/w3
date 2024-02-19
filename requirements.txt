@@ -1,0 +1,6 @@
+binance-connector>=3.5.1 ; python_version >= '3.10'
+loguru>=0.7.2 ; python_version >= '3.10'
+numpy>=1.26.3 ; python_version >= '3.10'
+pandas>=2.2.0 ; python_version >= '3.10'
+pyarrow>=15.0.0 ; python_version >= '3.10'
+SQLAlchemy>=2.0.25 ; python_version >= '3.10'
