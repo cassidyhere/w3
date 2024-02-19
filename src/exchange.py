@@ -40,8 +40,5 @@ class Exchange:
 
 
 if __name__ == "__main__":
-    from pprint import pprint
-
     exchange = Exchange.from_client()
-    pprint(exchange.get_symbols({"quoteAsset": "USDT"}))
     exchange.to_json()

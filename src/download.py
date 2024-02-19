@@ -1,4 +1,5 @@
 import os
+import time
 import datetime
 from functools import cached_property
 from typing import Union, Optional
@@ -143,17 +144,25 @@ class SpotDownloader:
         interval: str,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
+        ignore_exists: bool = True,
     ) -> None:
         """下载k线数据"""
 
         helper = SymbolDownloadHelper(self, symbol, interval, start_time)
 
-        if helper.should_ignore():
+        if ignore_exists and helper.should_ignore():
             logger.info(f"ignore {helper.name}")
             return
 
-        helper.download_klines(start_time, end_time)
-        helper.persist()
+        for i in (2, 4, 8, 16):
+            try:
+                helper.download_klines(start_time, end_time)
+            except Exception as e:
+                logger.warning(f"download klines failed: {e}")
+                time.sleep(i)
+            else:
+                helper.persist()
+                break
 
     def download_ndays_klines(
         self,
@@ -161,6 +170,7 @@ class SpotDownloader:
         interval: str,
         start_date: Union[str, datetime.datetime],
         ndays: Optional[int] = None,
+        ignore_exists: bool = True,
     ) -> None:
         """下载多天的k线数据"""
         today = datetime.date.today()
@@ -173,6 +183,7 @@ class SpotDownloader:
                 interval=interval,
                 start_time=i,
                 end_time=i + datetime.timedelta(days=1),
+                ignore_exists=ignore_exists,
             )
 
     def close(self) -> None:

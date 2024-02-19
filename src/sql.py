@@ -202,8 +202,5 @@ class DownloadLog(DB):
 
 
 if __name__ == "__main__":
-    # db.create_all(drop=True)
-    # DownloadLog.init_from_csvs()
-    # DownloadLog.persist_ignore()
-    # print(DownloadLog.list())
-    print(DownloadLog.count())
+    db.create_all(drop=True)
+    DownloadLog.init_from_csvs()
