@@ -212,4 +212,10 @@ def download_usdt_symbols_klines(
 
 
 if __name__ == "__main__":
-    download_usdt_symbols_klines("1h", start_date="20240101")
+    download_usdt_symbols_klines("15m", start_date="20240101")
+    download_usdt_symbols_klines("5m", start_date="20240101")
+    download_usdt_symbols_klines("3m", start_date="20240101")
+    download_usdt_symbols_klines("1m", start_date="20240101")
+    download_usdt_symbols_klines("30m", start_date="20240101")
+    download_usdt_symbols_klines("2h", start_date="20240101")
+    download_usdt_symbols_klines("4h", start_date="20240101")

@@ -76,9 +76,9 @@ def calc_cum_return(
         if df is None:
             continue
         df = filter_incr_gt(df, n)
-        df = filter_draw_down_lt(df, 0.1)
-        df = df[df["next_incr"] > 0]
-        df = df[df["close"] == df["high"]]
+        # df = filter_draw_down_lt(df, 0.1)
+        # df = df[df["next_incr"] > 0]
+        # df = df[df["close"] == df["high"]]
         if df.empty:
             continue
         print(df)
@@ -92,19 +92,9 @@ if __name__ == "__main__":
         logs = []
         for i in (
             ("2024-01-01", "2024-01-31"),
-            ("2023-12-01", "2023-12-31"),
-            ("2023-11-01", "2023-11-30"),
-            ("2023-10-01", "2023-10-31"),
-            ("2023-09-01", "2023-09-30"),
-            ("2023-07-01", "2023-08-31"),
-            ("2023-06-01", "2023-08-31"),
-            ("2023-05-01", "2023-08-31"),
-            ("2023-04-01", "2023-08-31"),
-            ("2023-03-01", "2023-08-31"),
-            ("2023-02-01", "2023-08-31"),
-            ("2023-01-01", "2023-08-31"),
+            ("2024-02-01", "2024-02-28"),
         ):
-            ret = calc_cum_return(date_limit=i, loss=0.002)
+            ret = calc_cum_return(date_limit=i, loss=0.002, interval="1m")
             logs.append(f"{i[0]}~{i[1]}: {ret}")
         for i in logs:
             print(i)
