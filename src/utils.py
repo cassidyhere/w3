@@ -58,6 +58,17 @@ def date_range(
     return pd.date_range(start=date, end=end, periods=ndays, freq="d").tolist()
 
 
+def remove_trailing_0s(s: str) -> str:
+    if not s:
+        return s
+    index = len(s) - 1
+    while index >= 0 and s[index] == "0":
+        index -= 1
+    if index == -1:
+        return ""
+    return s[:index + 1]
+
+
 def df2csv(df: pd.DataFrame, path: str) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     df.to_csv(path, index=False)

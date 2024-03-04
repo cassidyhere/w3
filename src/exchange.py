@@ -31,6 +31,8 @@ class Exchange:
     def get_symbols(self, filters: Dict[str, Any]) -> List[str]:
         symbols = []
         for s in self.data["symbols"]:
+            if s["status"] != "TRADING":  # 过滤不能交易的symbol
+                continue
             flag = 1
             for k, v in filters.items():
                 if s[k] != v:

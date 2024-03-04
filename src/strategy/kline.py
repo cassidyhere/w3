@@ -2,7 +2,9 @@ import datetime
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Union, Optional
 
-from src.utils import interval2timedelta
+import pandas as pd
+
+from src.utils import interval2timedelta, remove_trailing_0s
 
 
 @dataclass
@@ -27,7 +29,16 @@ class KlineItem:
         )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.symbol},{self.interval},{self.open},{self.high},{self.low},{self.close},{self.dt})"
+        s_args = ",".join((
+            self.symbol,
+            self.interval,
+            remove_trailing_0s(self.open),
+            remove_trailing_0s(self.high),
+            remove_trailing_0s(self.low),
+            remove_trailing_0s(self.close),
+            str(self.dt),
+        ))
+        return f"{self.__class__.__name__}({s_args})"
 
 
 class Klines(list):
@@ -55,6 +66,13 @@ class Klines(list):
         for i in sorted(klines, key=lambda x: x.dt):
             self.append(i)
 
+    def to_df(self) -> pd.DataFrame:
+        df = pd.DataFrame(self)
+        c = df["close"].astype("float")
+        o = df["open"].astype("float")
+        df["incr"] = (c - o) / o
+        return df
+
 
 class KlinesManager:
     def __init__(self, downloader: "SpotDownloader"):
@@ -77,3 +95,20 @@ class KlinesManager:
     def download_klines(self, symbol: str, interval: str, limit: int) -> None:
         data = self.downloader.download_klines(symbol, interval=interval, limit=limit)
         self.add(data)
+
+
+def get_klines_df(symbol: str, interval: str, limit: int) -> pd.DataFrame:
+    from src.strategy.download import BinanceSpotDownloader
+
+    proxy = KlinesManager(BinanceSpotDownloader())
+    proxy.download_klines(symbol, interval=interval, limit=limit)
+    klines = proxy.get(symbol + interval)
+    return klines.to_df()
+
+
+if __name__ == "__main__":
+    from src.strategy.download import BinanceSpotDownloader
+
+    df = get_klines_df("BTTCUSDT", "1h", 5)
+    with pd.option_context("display.max_columns", None):
+        print(df)

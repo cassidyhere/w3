@@ -1,26 +1,21 @@
 from decimal import Decimal
 from typing import Union, List
 
-from src.strategy.kline import Klines
+from src.strategy.kline import KlineItem, Klines
 
 
 t_num = Union[str, float, Decimal]
 
 
-def calc_incr(a: t_num, b: t_num) -> Decimal:
-    return (Decimal(a) - Decimal(b)) / Decimal(b)
+def calc_incr(kline: KlineItem) -> Decimal:
+    return (Decimal(kline.close) - Decimal(kline.open)) / Decimal(kline.open)
 
 
 def calc_kl_last_incr(klines: Klines) -> Union[None, Decimal]:
-    if len(klines) < 2:
-        return
-    return calc_incr(klines[-2].close, klines[-1].close)
+    if klines:
+        return calc_incr(klines[-1])
 
 
 def calc_kl_incr(klines: Klines) -> List[Decimal]:
-    if len(klines) < 2:
-        return []
-    incr = []
-    for i in range(len(klines) - 1):
-        incr.append(calc_incr(klines[i + 1].close, klines[i].close))
+    incr = list(map(calc_incr, klines))
     return incr
