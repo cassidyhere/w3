@@ -67,10 +67,8 @@ class Klines(list):
             self.append(i)
 
     def to_df(self) -> pd.DataFrame:
-        df = pd.DataFrame(self)
-        c = df["close"].astype("float")
-        o = df["open"].astype("float")
-        df["incr"] = (c - o) / o
+        df = pd.DataFrame(self).astype({"close": "float", "open": "float"})
+        df["incr"] = (df["close"] - df["open"]) / df["open"]
         return df
 
 
@@ -107,8 +105,5 @@ def get_klines_df(symbol: str, interval: str, limit: int) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    from src.strategy.download import BinanceSpotDownloader
-
-    df = get_klines_df("BTTCUSDT", "1h", 5)
     with pd.option_context("display.max_columns", None):
-        print(df)
+        print(get_klines_df("BTTCUSDT", "1h", 5))

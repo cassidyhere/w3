@@ -10,7 +10,6 @@ from loguru import logger
 from src.exchange import Exchange
 from src.strategy.kline import Klines, KlinesManager
 from src.strategy.download import BinanceSpotDownloader
-from src.strategy.calc import calc_incr
 from src.utils import get_next_runtime
 
 
@@ -82,9 +81,7 @@ class Executor:
                 continue
 
             klines = self.klines_manager.get(f"{s}{self.interval}")
-            incr = round(calc_incr(klines[-1]), 4)
-            logger.info(f"download {s} done, got {len(klines)} klines, "
-                        f"last kline: {klines[-1]}, last incr: {incr}")
+            logger.info(f"download {s} done, got {len(klines)} klines")
 
             if not klines:
                 continue
