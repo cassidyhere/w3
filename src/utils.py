@@ -6,6 +6,37 @@ import pandas as pd
 from loguru import logger
 
 
+def binance_timestamp2dt(ts: int) -> datetime.datetime:
+    return datetime.datetime.fromtimestamp(ts / 1000)
+
+
+def split_interval(interval: str) -> Tuple[int, str]:
+    return int(interval[:-1]), interval[-1].lower()
+
+
+def interval2timedelta(interval: str) -> datetime.timedelta:
+    n, t = split_interval(interval)
+    if t == "h":
+        kw = dict(hours=n)
+    elif t == "m":
+        kw = dict(minutes=n)
+    else:
+        raise ValueError(f"Invalid interval: {interval}")
+    return datetime.timedelta(**kw)
+
+
+def get_next_runtime(interval: str) -> datetime.datetime:
+    n, t = split_interval(interval)
+    rt = datetime.datetime.now().replace(second=0, microsecond=0)
+    if t == "h":
+        rt = rt.replace(minute=0) + datetime.timedelta(hours=n)
+    elif t == "m":
+        rt = rt + datetime.timedelta(minutes=n)
+    else:
+        raise ValueError(f"Invalid interval: {interval}")
+    return rt
+
+
 def datetime2timestamp(dt: Union[int, datetime.datetime]) -> int:
     if isinstance(dt, int):
         return dt
@@ -59,3 +90,11 @@ def extract_symbol_from_file(file: str) -> Tuple[str, str, str]:
     file = os.path.basename(file)
     symbol, interval, date = file.replace(".csv", "").split("-", 2)
     return symbol, interval, date
+
+
+def log2file(file: str) -> None:
+    log_dir = os.path.join(
+        os.path.abspath(os.path.dirname(os.path.dirname(__file__))), "log"
+    )
+    os.makedirs(log_dir, exist_ok=True)
+    logger.add(os.path.join(os.getenv("LOG_DIR", log_dir), file), enqueue=True)

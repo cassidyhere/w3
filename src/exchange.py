@@ -1,3 +1,4 @@
+import os
 import json
 from typing import Dict, Any, List
 
@@ -10,7 +11,10 @@ class Exchange:
 
     @classmethod
     def from_json(cls) -> "Exchange":
-        with open("exchange_info.json") as f:
+        file = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "exchange_info.json"
+        )
+        with open(file) as f:
             data = json.load(f)
         return cls(data)
 
